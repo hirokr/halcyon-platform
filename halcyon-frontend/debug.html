@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug - Halcyon Platform</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .debug-info {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .error {
+        color: #d32f2f;
+      }
+      .success {
+        color: #388e3c;
+      }
+      .info {
+        color: #1976d2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Halcyon Platform Debug</h1>
+
+    <div class="debug-info">
+      <h3>Script Loading Status</h3>
+      <div id="debug-output"></div>
+    </div>
+
+    <div class="debug-info">
+      <h3>DOM Elements</h3>
+      <div id="dom-check"></div>
+    </div>
+
+    <div class="debug-info">
+      <h3>Console Logs</h3>
+      <div id="console-logs"></div>
+    </div>
+
+    <!-- Load scripts in order -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      const debugOutput = document.getElementById("debug-output");
+      const domCheck = document.getElementById("dom-check");
+      const consoleLogs = document.getElementById("console-logs");
+
+      function log(message, type = "info") {
+        const div = document.createElement("div");
+        div.className = type;
+        div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+        consoleLogs.appendChild(div);
+        console.log(message);
+      }
+
+      // Check script loading
+      log(
+        "Chart.js loaded: " + (typeof Chart !== "undefined"),
+        typeof Chart !== "undefined" ? "success" : "error"
+      );
+      log(
+        "Leaflet loaded: " + (typeof L !== "undefined"),
+        typeof L !== "undefined" ? "success" : "error"
+      );
+
+      debugOutput.innerHTML = `
+            <p class="${
+              typeof Chart !== "undefined" ? "success" : "error"
+            }">Chart.js: ${
+        typeof Chart !== "undefined" ? "LOADED" : "FAILED"
+      }</p>
+            <p class="${
+              typeof L !== "undefined" ? "success" : "error"
+            }">Leaflet: ${typeof L !== "undefined" ? "LOADED" : "FAILED"}</p>
+        `;
+
+      // Check if main elements exist in main app
+      fetch("index.html")
+        .then((response) => response.text())
+        .then((html) => {
+          const hasMap = html.includes('id="map"');
+          const hasMainJs = html.includes("main.js");
+          const hasConfigJs = html.includes("config.js");
+
+          domCheck.innerHTML = `
+                    <p class="${hasMap ? "success" : "error"}">Map element: ${
+            hasMap ? "FOUND" : "MISSING"
+          }</p>
+                    <p class="${
+                      hasMainJs ? "success" : "error"
+                    }">main.js reference: ${hasMainJs ? "FOUND" : "MISSING"}</p>
+                    <p class="${
+                      hasConfigJs ? "success" : "error"
+                    }">config.js reference: ${
+            hasConfigJs ? "FOUND" : "MISSING"
+          }</p>
+                `;
+
+          log("HTML analysis complete");
+        })
+        .catch((error) => {
+          log("Error fetching index.html: " + error.message, "error");
+        });
+
+      // Test config.js loading
+      const configScript = document.createElement("script");
+      configScript.src = "config.js";
+      configScript.onload = () =>
+        log("config.js loaded successfully", "success");
+      configScript.onerror = () => log("Failed to load config.js", "error");
+      document.head.appendChild(configScript);
+
+      // Test main.js loading
+      const mainScript = document.createElement("script");
+      mainScript.src = "main.js";
+      mainScript.onload = () => log("main.js loaded successfully", "success");
+      mainScript.onerror = () => log("Failed to load main.js", "error");
+      document.head.appendChild(mainScript);
+    </script>
+  </body>
+</html>

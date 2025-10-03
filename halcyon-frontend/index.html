@@ -11,12 +11,6 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- API Configuration -->
-    <script src="config.js"></script>
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -243,6 +237,51 @@
               <div class="loading-spinner"></div>
               <p>Loading Dhaka wards...</p>
             </div>
+            <div
+              class="js-error-fallback"
+              id="jsErrorFallback"
+              style="
+                display: none;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #f44336;
+                color: white;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+                z-index: 1000;
+              "
+            >
+              <h3>⚠️ JavaScript Loading Error</h3>
+              <p>The interactive map failed to load. This could be due to:</p>
+              <ul style="text-align: left; margin: 10px 0">
+                <li>Network connectivity issues</li>
+                <li>Script loading problems</li>
+                <li>Browser compatibility</li>
+              </ul>
+              <p><strong>Try:</strong></p>
+              <ul style="text-align: left; margin: 10px 0">
+                <li>Refreshing the page</li>
+                <li>Checking your internet connection</li>
+                <li>Using a different browser</li>
+              </ul>
+              <button
+                onclick="window.location.reload()"
+                style="
+                  background: white;
+                  color: #f44336;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 4px;
+                  cursor: pointer;
+                  margin-top: 10px;
+                "
+              >
+                Refresh Page
+              </button>
+            </div>
           </div>
         </section>
 
@@ -378,8 +417,26 @@
       </main>
     </div>
 
+    <!-- Error Detection Script -->
+    <script>
+      // Set a timeout to show error message if app doesn't initialize
+      setTimeout(() => {
+        if (!window.halcyonApp) {
+          console.error("Halcyon App failed to initialize");
+          document.getElementById("mapLoading").style.display = "none";
+          document.getElementById("jsErrorFallback").style.display = "block";
+        }
+      }, 10000); // Wait 10 seconds
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- API Configuration -->
+    <script src="config.js"></script>
 
     <!-- Custom JavaScript -->
     <script src="main.js"></script>
