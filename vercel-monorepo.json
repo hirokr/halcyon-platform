@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "halcyon-api",
+      "source": ".",
+      "builds": [
+        {
+          "src": "server.js",
+          "use": "@vercel/node"
+        }
+      ],
+      "routes": [
+        {
+          "src": "/api/(.*)",
+          "dest": "/server.js"
+        }
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "halcyon-frontend",
+      "source": "halcyon-frontend",
+      "builds": [
+        {
+          "src": "*.html",
+          "use": "@vercel/static"
+        },
+        {
+          "src": "*.js",
+          "use": "@vercel/static"
+        },
+        {
+          "src": "*.css",
+          "use": "@vercel/static"
+        }
+      ],
+      "routes": [
+        {
+          "src": "/(.*)",
+          "dest": "/index.html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js",
+      "headers": {
+        "Cache-Control": "s-maxage=60, stale-while-revalidate"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
+  }
+}
